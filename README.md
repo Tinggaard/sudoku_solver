@@ -6,4 +6,6 @@ $ python3 solver.py
 ```
 
 # TODO
-Sudoku is still flipped, meaning result is not valid if even existing.
+[ ] solve sudoku entirely
+[ ] debugging
+[ ] implement reading from stdin

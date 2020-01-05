@@ -85,6 +85,7 @@ class board:
     def _add_possible(self):
         change = True
         # maybe only run once?
+        # add all with single possible
         while change:
             change = False
             self._get_possible()
@@ -93,6 +94,62 @@ class board:
                     if len(n.possible) == 1:
                         n.set_value(n.possible.pop())
                         change = True
+
+
+        change = True
+        c = 0
+        while change:
+            # update everything
+            c += 1
+            change = False
+            self._get_possible()
+
+
+            # iterate all nodes in sudoku
+            for n in self._nodes():
+                # if node already has a value, skip it
+                if n.value:
+                    continue
+
+                print('NEW NODE')
+
+                row = self.get_row(n.y)
+                col = self.get_col(n.x)
+                square = self.get_square(n.x, n.y)
+
+                # iterating each row, col and square seperately
+                for item in (row, col, square):
+                    test = n.possible.copy()
+                    print('TESTING WITH: ', (n.x, n.y), test)
+
+                    # skip if value or self
+                    for indicy in item:
+                        if indicy.value or (indicy.x == n.x and indicy.y == n.y):
+                            continue
+
+
+                        print('possible: ', indicy.possible)
+                        # subtract set of possible of iterated
+                        test -= indicy.possible
+                        print('set after: ', test, '\n')
+
+                    if len(test) < 1:
+                        raise ValueError('Sudoku cannot be solved')
+
+                    # add if only possible answer in type (row, col, square)
+                    elif len(test) == 1:
+                        print('added something my dudes...', (n.x, n.y))
+                        n.set_value(test.pop())
+                        change = True
+                        break
+
+
+
+                    print('________________')
+
+        print(c)
+            # test = {*sub_n.possible for sub_n in np.array((row, col, square)).flatten()}
+
 
 
 
@@ -113,6 +170,7 @@ class node:
 
     def set_value(self, val):
         self.value = val
+        self.possible = set([])
 
     def unset_value(self):
         self.value = 0

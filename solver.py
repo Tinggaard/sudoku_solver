@@ -17,12 +17,16 @@ class board:
 
     # for printing without nodes
     def __repr__(self):
+        # return str(self.sudoku)
         return str(np.array([[x.value for x in y] for y in self.sudoku]))
 
     # iterating the values
     def _nodes(self):
         return self.sudoku.flatten()
 
+    # returning only the values
+    def vals(self):
+        return np.array([[x.value for x in y] for y in self.sudoku])
 
     # get node-row of sudoku
     def get_row(self, y):
@@ -71,31 +75,36 @@ class board:
             row = self.get_row_vals(n.y)
             col = self.get_col_vals(n.x)
             square = self.get_square_vals(n.x, n.y)
+            n.possible = set([]) # reset possible values
 
             # iterate the possibilities
             for i in range(1,10):
                 if i not in np.array((row, col, square)).flatten():
                     n.add_possible(i)
-            # print(n.possible)
 
             if len(n.possible) < 1:
                 raise ValueError('Sudoku cannot be solved')
 
 
-    def _add_possible(self):
-        change = True
-        # maybe only run once?
-        # add all with single possible
-        while change:
-            change = False
+    def _add_singles(self):
+        # add all with single possible value
+        for cols in self.sudoku:
+            for n in cols:
+                if len(n.possible) == 1:
+                    n.set_value(n.possible.pop())
+
+
+    def loop(self):
+        prev = None
+        while not np.array_equal(prev, self.vals()):
+            prev = self.vals()
             self._get_possible()
-            for cols in self.sudoku:
-                for n in cols:
-                    if len(n.possible) == 1:
-                        n.set_value(n.possible.pop())
-                        change = True
+            self._add_singles()
 
 
+
+
+    def _add_pairs(self):
         change = True
         c = 0
         while change:
@@ -164,7 +173,7 @@ class node:
         self.possible = set([]) #possible values if unset
 
     def __repr__(self):
-        return str(self.value)
+        # return str(self.value)
         return "node({})".format(str(self.value))
 
 
@@ -184,6 +193,18 @@ class node:
 
 
 # re:    print\("[1-9.]{9}"\)
+first = \
+[[2, 0, 3, 0, 0, 0, 7, 0, 4],
+ [0, 9, 1, 2, 7, 4, 5, 0, 3],
+ [0, 6, 7, 3, 5, 9, 2, 0, 1],
+ [7, 0, 0, 6, 0, 3, 0, 4, 5],
+ [5, 3, 4, 0, 1, 7, 6, 2, 8],
+ [0, 8, 0, 0, 2, 0, 9, 0, 7],
+ [9, 1, 0, 5, 3, 6, 4, 7, 2],
+ [3, 4, 5, 0, 9, 0, 0, 0, 6],
+ [0, 0, 2, 0, 0, 1, 0, 0, 9]]
+
+
 l1 = [2, 0, 3, 0, 0, 0, 7, 0, 4]
 l2 = [0, 9, 1, 2, 7, 4, 5, 0, 3]
 l3 = [0, 6, 7, 3, 5, 9, 2, 0, 1]
@@ -208,12 +229,15 @@ sudoku2 = \
 
 
 
-s = board(sudoku2)
 
-print('input')
-print(s)
+if __name__ == '__main__':
 
-s._add_possible()
+    s = board(sudoku2)
 
-print('\nafter single possibilities')
-print(s)
+    print('input')
+    print(s)
+
+    s.loop()
+
+    print('\nafter single possibilities')
+    print(s)

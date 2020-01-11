@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import sys
-
 # flag = ""
 
 # def get_solution():
@@ -21,15 +19,6 @@ print(".8..2.9.7")
 print("91.536472")
 print("345.9...6")
 print("..2..1..9")
-# 2.3...7.4
-# .912745.3
-# .673592.1
-# 7..6.3.45
-# 534.17628
-# .8..2.9.7
-# 91.536472
-# 345.9...6
-# ..2..1..9
 
 # flag += get_solution().upper()
 
@@ -286,4 +275,4 @@ print("6.8.7..5.")
 print("3.2....71")
 # flag += get_solution()
 
-print(flag)
+# print(flag)
